@@ -11,27 +11,16 @@ class TableExtractor:
         self.read_image()
         self.store_process_image("0_original.jpg", self.image)
         self.convert_image_to_grayscale()
-        self.store_process_image("1_grayscaled.jpg", self.grayscale_image)
         self.threshold_image()
-        self.store_process_image("3_thresholded.jpg", self.thresholded_image)
         self.invert_image()
-        self.store_process_image("4_inverteded.jpg", self.inverted_image)
         self.dilate_image()
-        self.store_process_image("5_dialateded.jpg", self.dilated_image)
         self.find_contours()
-        self.store_process_image("6_all_contours.jpg", self.image_with_all_contours)
         self.filter_contours_and_leave_only_rectangles()
-        self.store_process_image("7_only_rectangular_contours.jpg", self.image_with_only_rectangular_contours)
         self.find_largest_contour_by_area()
-        self.store_process_image("8_contour_with_max_area.jpg", self.image_with_contour_with_max_area)
         self.order_points_in_the_contour_with_max_area()
-        self.store_process_image("9_with_4_corner_points_plotted.jpg", self.image_with_points_plotted)
         self.calculate_new_width_and_height_of_image()
         self.apply_perspective_transform()
-        self.store_process_image("10_perspective_corrected.jpg", self.perspective_corrected_image)
         self.add_10_percent_padding()
-        self.store_process_image("11_perspective_corrected_with_padding.jpg",
-                                 self.perspective_corrected_image_with_padding)
         return self.perspective_corrected_image_with_padding
 
     def read_image(self):
@@ -124,30 +113,16 @@ class TableExtractor:
         return dis
 
     def order_points(self, pts):
-        # initialzie a list of coordinates that will be ordered
-        # such that the first entry in the list is the top-left,
-        # the second entry is the top-right, the third is the
-        # bottom-right, and the fourth is the bottom-left
         pts = pts.reshape(4, 2)
         rect = np.zeros((4, 2), dtype="float32")
-
-        # the top-left point will have the smallest sum, whereas
-        # the bottom-right point will have the largest sum
         s = pts.sum(axis=1)
         rect[0] = pts[np.argmin(s)]
         rect[2] = pts[np.argmax(s)]
-
-        # now, compute the difference between the points, the
-        # top-right point will have the smallest difference,
-        # whereas the bottom-left will have the largest difference
         diff = np.diff(pts, axis=1)
         rect[1] = pts[np.argmin(diff)]
         rect[3] = pts[np.argmax(diff)]
-
-        # return the ordered coordinates
         return rect
 
     def store_process_image(self, file_name, image):
         path = "./image/process_images/" + file_name
         cv2.imwrite(path, image)
-
